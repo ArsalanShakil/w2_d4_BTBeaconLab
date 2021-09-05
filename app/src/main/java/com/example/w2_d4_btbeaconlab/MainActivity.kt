@@ -10,20 +10,44 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private var mBluetoothAdapter: BluetoothAdapter? = null
+    private val data = ArrayList<ItemsViewModel>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // getting the recyclerview by its id
+        val recyclerview = findViewById<RecyclerView>(R.id.recyclerview)
+
+        // this creates a vertical layout Manager
+        recyclerview.layoutManager = LinearLayoutManager(this)
+
+        // ArrayList of class ItemsViewModel
+
+        // This loop will create 20 Views containing
+        // the image with the count of view
+
+
+        // This will pass the ArrayList to our Adapter
+       // val adapter = CustomAdapter(data)
+
+        // Setting the Adapter with the recyclerview
+        //recyclerview.adapter = adapter
+
+
+
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         mBluetoothAdapter = bluetoothManager.adapter
         button.setOnClickListener {
             if(hasPermissions()) {
                 startScan()
-                textView.text = ScanResult.CONTENTS_FILE_DESCRIPTOR.toString()
 
 
             } else {
@@ -39,8 +63,8 @@ class MainActivity : AppCompatActivity() {
         const val SCAN_PERIOD: Long = 300000
     }
     private fun startScan() {
+        data.clear()
         Log.d("DBG", "startScan")
-        textView.text = "Scan started"
         mScanResults = HashMap()
         var mScanCallback = BtleScanCallback()
         var mBluetoothLeScanner = mBluetoothAdapter!!.bluetoothLeScanner
@@ -57,20 +81,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun stopScan() {
         Log.d("DBG", "stopScan")
-        textView.text = "stopScan"
 
 
     }
 
     private inner class BtleScanCallback : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
-            Log.d("DBG", "onScanResult $result")
+            Log.d("DBG", "onScanResult ${result.device}")
 
             addScanResult(result)
         }
         override fun onBatchScanResults(results: List<ScanResult>) {
             for (result in results) {
                 addScanResult(result)
+
             }
         }
         override fun onScanFailed(errorCode: Int) {
@@ -81,9 +105,20 @@ class MainActivity : AppCompatActivity() {
             val deviceAddress = device.address
             mScanResults!![deviceAddress] = result
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Log.d("DBG", "result.device.name ${device.name}")
-                textView.text = "${device.name}"
-                Log.d("DBG", "Device address: $deviceAddress (${result.isConnectable})")
+                    if(result.device.name != null) {
+                        data.add(ItemsViewModel(R.drawable.ic_baseline_bluetooth_24, "${result.device.name}  ${result.device.address}  ${result.rssi}"))
+                        val adapter = CustomAdapter(data)
+                        recyclerview.adapter = adapter
+
+                    } else {
+
+                    data.add(ItemsViewModel(R.drawable.ic_baseline_bluetooth_24, "${result.device.address}  ${result.rssi}"))
+                    val adapter = CustomAdapter(data)
+                    recyclerview.adapter = adapter
+                    Log.d("DBG", "result.device.name ${device.name}")
+                    Log.d("DBG", "Device address: $deviceAddress (${result.isConnectable})")
+                    }
+
             }
         }
     }
