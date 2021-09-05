@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
 
     private var mScanResults: HashMap<String, ScanResult>? = null
     companion object {
-        const val SCAN_PERIOD: Long = 300000
+        const val SCAN_PERIOD: Long = 30000
     }
     private fun startScan() {
         data.clear()
@@ -102,22 +102,18 @@ class MainActivity : AppCompatActivity() {
         }
         private fun addScanResult(result: ScanResult) {
             val device = result.device
+            val deviceName = device.name ?: "N/A"
             val deviceAddress = device.address
             mScanResults!![deviceAddress] = result
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    if(result.device.name != null) {
-                        data.add(ItemsViewModel(R.drawable.ic_baseline_bluetooth_24, "${result.device.name}  ${result.device.address}  ${result.rssi}"))
+                        data.add(ItemsViewModel(R.drawable.ic_baseline_bluetooth_24,deviceName,
+                            result.device.address,result.rssi.toString()))
                         val adapter = CustomAdapter(data)
                         recyclerview.adapter = adapter
 
-                    } else {
-
-                    data.add(ItemsViewModel(R.drawable.ic_baseline_bluetooth_24, "${result.device.address}  ${result.rssi}"))
-                    val adapter = CustomAdapter(data)
-                    recyclerview.adapter = adapter
-                    Log.d("DBG", "result.device.name ${device.name}")
+                    Log.d("DBG", "result.device.name ${deviceName}")
                     Log.d("DBG", "Device address: $deviceAddress (${result.isConnectable})")
-                    }
+
 
             }
         }
