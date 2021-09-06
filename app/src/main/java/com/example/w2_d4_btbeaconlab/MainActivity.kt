@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.activity_main.*
@@ -56,6 +57,8 @@ class MainActivity : AppCompatActivity() {
     private fun startScan() {
         data.clear()
         Log.d("DBG", "startScan")
+        Toast.makeText(applicationContext,"startScan()",Toast.LENGTH_SHORT).show()
+
         mScanResults = HashMap()
 
         var mScanCallback = BtleScanCallback()
@@ -67,15 +70,16 @@ class MainActivity : AppCompatActivity() {
 // Stops scanning after a pre-defined scan period.
         var mHandler = Handler()
         mHandler!!.postDelayed({mBluetoothLeScanner.stopScan(mScanCallback)}, SCAN_PERIOD)
+        Toast.makeText(applicationContext,"stopScan()",Toast.LENGTH_SHORT).show()
         var mScanning = true
         mBluetoothLeScanner!!.startScan(filter, settings, mScanCallback)
     }
 
-    private fun stopScan() {
+    /*private fun stopScan() {
         Log.d("DBG", "stopScan")
         var mBluetoothLeScanner = mBluetoothAdapter!!.bluetoothLeScanner
 
-    }
+    }*/
 
     private inner class BtleScanCallback : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult) {
@@ -115,10 +119,12 @@ class MainActivity : AppCompatActivity() {
     private fun hasPermissions(): Boolean {
         if (mBluetoothAdapter == null || !mBluetoothAdapter!!.isEnabled) {
             Log.d("DBG", "No Bluetooth LE capability")
+            Toast.makeText(applicationContext,"No Bluetooth LE capability please open bluetooth :)",Toast.LENGTH_SHORT).show()
+
             return false
         } else if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) !=
             PackageManager.PERMISSION_GRANTED) {
-            Log.d("DBG", "No fine location access")
+            Log.d("DBG", "No fine location access please open location :)")
             requestPermissions(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 1);
             return true // assuming that the user grants permission
         }
