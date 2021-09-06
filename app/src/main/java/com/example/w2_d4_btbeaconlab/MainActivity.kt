@@ -18,7 +18,6 @@ class MainActivity : AppCompatActivity() {
     private var mBluetoothAdapter: BluetoothAdapter? = null
     private val data = ArrayList<ItemsViewModel>()
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,17 +28,9 @@ class MainActivity : AppCompatActivity() {
         // this creates a vertical layout Manager
         recyclerview.layoutManager = LinearLayoutManager(this)
 
-        // ArrayList of class ItemsViewModel
-
-        // This loop will create 20 Views containing
-        // the image with the count of view
 
 
-        // This will pass the ArrayList to our Adapter
-       // val adapter = CustomAdapter(data)
 
-        // Setting the Adapter with the recyclerview
-        //recyclerview.adapter = adapter
 
 
 
@@ -60,12 +51,13 @@ class MainActivity : AppCompatActivity() {
 
     private var mScanResults: HashMap<String, ScanResult>? = null
     companion object {
-        const val SCAN_PERIOD: Long = 30000
+        const val SCAN_PERIOD: Long = 3000
     }
     private fun startScan() {
         data.clear()
         Log.d("DBG", "startScan")
         mScanResults = HashMap()
+
         var mScanCallback = BtleScanCallback()
         var mBluetoothLeScanner = mBluetoothAdapter!!.bluetoothLeScanner
         val settings = ScanSettings.Builder()
@@ -74,14 +66,14 @@ class MainActivity : AppCompatActivity() {
         val filter: List<ScanFilter>? = null
 // Stops scanning after a pre-defined scan period.
         var mHandler = Handler()
-        mHandler!!.postDelayed({ stopScan() }, SCAN_PERIOD)
+        mHandler!!.postDelayed({mBluetoothLeScanner.stopScan(mScanCallback)}, SCAN_PERIOD)
         var mScanning = true
         mBluetoothLeScanner!!.startScan(filter, settings, mScanCallback)
     }
 
     private fun stopScan() {
         Log.d("DBG", "stopScan")
-
+        var mBluetoothLeScanner = mBluetoothAdapter!!.bluetoothLeScanner
 
     }
 
@@ -106,13 +98,14 @@ class MainActivity : AppCompatActivity() {
             val deviceAddress = device.address
             mScanResults!![deviceAddress] = result
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                        data.add(ItemsViewModel(R.drawable.ic_baseline_bluetooth_24,deviceName,
-                            result.device.address,result.rssi.toString()))
-                        val adapter = CustomAdapter(data)
+                        data.add(ItemsViewModel(deviceName,
+                            result.device.address,result.rssi.toString(),result.isConnectable))
+                val adapter = CustomAdapter(data.distinctBy { it.deviceAddress })
                         recyclerview.adapter = adapter
 
                     Log.d("DBG", "result.device.name ${deviceName}")
                     Log.d("DBG", "Device address: $deviceAddress (${result.isConnectable})")
+                    Log.d("DBG","data.distinctBy: ${data.distinctBy { it.deviceAddress }}" )
 
 
             }

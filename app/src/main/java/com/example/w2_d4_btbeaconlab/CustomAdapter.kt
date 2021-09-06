@@ -1,10 +1,11 @@
 package com.example.w2_d4_btbeaconlab
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 
 class CustomAdapter(private val mList: List<ItemsViewModel>) : RecyclerView.Adapter<CustomAdapter.ViewHolder>() {
@@ -24,13 +25,25 @@ class CustomAdapter(private val mList: List<ItemsViewModel>) : RecyclerView.Adap
 
         val ItemsViewModel = mList[position]
 
-        // sets the image to the imageview from our itemHolder class
-        holder.imageView.setImageResource(ItemsViewModel.image)
+        // sets the text to the textview and color from our itemHolder class
+        if(ItemsViewModel.isConnectable) {
+            holder.deviceName.setTextColor(Color.parseColor("#000000"))
+            holder.deviceAddress.setTextColor(Color.parseColor("#000000"))
+            holder.deviceRssi.setTextColor(Color.parseColor("#000000"))
 
-        // sets the text to the textview from our itemHolder class
-        holder.deviceName.text = ItemsViewModel.deviceName
-        holder.deviceAddress.text = ItemsViewModel.deviceAddress
-        holder.deviceRssi.text = ItemsViewModel.deviceRssi
+            holder.deviceName.text = ItemsViewModel.deviceName
+            holder.deviceAddress.text = ItemsViewModel.deviceAddress
+            holder.deviceRssi.text = ItemsViewModel.deviceRssi
+        } else {
+            holder.deviceName.setTextColor(Color.parseColor("#999696"))
+            holder.deviceAddress.setTextColor(Color.parseColor("#999696"))
+            holder.deviceRssi.setTextColor(Color.parseColor("#999696"))
+
+            holder.deviceName.text = ItemsViewModel.deviceName
+            holder.deviceAddress.text = ItemsViewModel.deviceAddress
+            holder.deviceRssi.text = ItemsViewModel.deviceRssi
+        }
+
 
     }
 
@@ -41,7 +54,6 @@ class CustomAdapter(private val mList: List<ItemsViewModel>) : RecyclerView.Adap
 
     // Holds the views for adding it to image and text
     class ViewHolder(ItemView: View) : RecyclerView.ViewHolder(ItemView) {
-        val imageView: ImageView = itemView.findViewById(R.id.imageview)
         val deviceName: TextView = itemView.findViewById(R.id.deviceName)
         val deviceAddress: TextView = itemView.findViewById(R.id.deviceAddress)
         val deviceRssi: TextView = itemView.findViewById(R.id.deviceRssi)
