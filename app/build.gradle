@@ -41,6 +41,8 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
     // for adding recyclerview
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.5.1'
 
     // for adding cardview
     implementation 'androidx.cardview:cardview:1.0.0'
